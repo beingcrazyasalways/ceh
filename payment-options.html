@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complete Payment | CEH AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .checkout h2 { margin-bottom: 10px; }
+    .pay-brand { display:flex; align-items:center; gap:10px; color:#7a7a7a; font-size: .95rem; }
+    .pay-brand i { color:#6772e5; }
+
+    /* Fancy card container */
+    .pay-card {
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(1200px 300px at -10% -10%, #f5f7ff 0%, #ffffff 40%) no-repeat;
+      border: 1px solid #eaeaf3;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.06), 0 2px 10px rgba(0,0,0,0.04);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .pay-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .pay-card:before {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(120deg, rgba(103,114,229,0.09), rgba(255,255,255,0) 40%);
+      pointer-events: none;
+    }
+
+    /* Tabs */
+    .tab-nav { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; position:relative; }
+    .tab-btn {
+      border:1px solid #e7e7ef; background:#fafbff; color:#2d2d2d;
+      padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600;
+      display:inline-flex; align-items:center; gap:8px;
+      transition: background .2s ease, border-color .2s ease, transform .08s ease, box-shadow .2s ease;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+    }
+    .tab-btn:hover { background:#f1f3ff; border-color:#d8dbff; box-shadow: 0 4px 14px rgba(103,114,229,0.18); }
+    .tab-btn:active { transform: translateY(1px); }
+    .tab-btn.active { border-color:#6772e5; background:#eef0ff; color:#1f1f1f; box-shadow: 0 6px 18px rgba(103,114,229,0.22); }
+
+    /* Brand chips */
+    .brand-row { display:flex; gap:10px; flex-wrap:wrap; margin:8px 0 16px; }
+    .brand-chip {
+      display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border:1px solid #eceffd;
+      border-radius:999px; background:linear-gradient(180deg, #ffffff, #f9faff); font-size:.9rem; color:#42424a;
+      box-shadow: 0 2px 8px rgba(103,114,229,0.08);
+    }
+
+    /* Panes */
+    .tab-pane { display:none; opacity:0; transform: translateY(8px); }
+    .tab-pane.active { display:block; animation: fadeUp .28s ease forwards; }
+    @keyframes fadeUp { to { opacity:1; transform: translateY(0); } }
+
+    /* Inputs */
+    .form-group input, .form-group select {
+      background:#fbfbfe; border-radius:10px; border:1px solid #e7e7ef;
+      transition: box-shadow .2s ease, border-color .2s ease;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color:#6772e5;
+      box-shadow: 0 0 0 4px rgba(103,114,229,0.15);
+    }
+
+    .secure-badges { display:flex; gap:12px; align-items:center; margin-top:10px; color:#777; font-size: .9rem; }
+    .input-hint { color:#666; font-size:.9rem; margin-top:6px; }
+    .divider { height:1px; background:linear-gradient(90deg, transparent, #eee, transparent); margin:20px 0; }
+
+    .card-grid { display:grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+    @media (max-width: 900px) { .card-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <nav class="navbar">
+        <div class="logo"><a href="index.html">EC-Council</a></div>
+        <ul class="nav-links">
+          <li><a href="index.html#pricing">Back to Pricing</a></li>
+        </ul>
+        <div class="hamburger"><span></span><span></span><span></span></div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section checkout">
+    <div class="container">
+      <div class="pay-brand"><i class="fas fa-lock"></i><span>Secure Checkout</span></div>
+      <h2>Complete Payment</h2>
+      <p class="section-subtitle">Choose a payment method to pay for your enrollment</p>
+
+      <div class="card-grid">
+        <div class="card pay-card">
+          <div class="tab-nav" id="tabNav">
+            <button class="tab-btn active" data-tab="upi"><i class="fas fa-qrcode"></i> UPI</button>
+            <button class="tab-btn" data-tab="card"><i class="far fa-credit-card"></i> Card</button>
+            <button class="tab-btn" data-tab="netbanking"><i class="fas fa-university"></i> Net Banking</button>
+          </div>
+
+          <div id="pane-upi" class="tab-pane active">
+            <div class="brand-row">
+              <span class="brand-chip"><i class="fas fa-bolt"></i> UPI AutoPay</span>
+              <span class="brand-chip"><i class="fas fa-qrcode"></i> UPI Apps</span>
+            </div>
+            <div class="form-group">
+              <input type="text" id="upiId" placeholder="Enter UPI ID (e.g., username@upi)" />
+              <div class="input-hint">We’ll validate your UPI ID before charging.</div>
+            </div>
+            <button class="btn btn-primary btn-block" id="payUpiBtn">Pay Now</button>
+          </div>
+
+          <div id="pane-card" class="tab-pane">
+            <div class="brand-row">
+              <span class="brand-chip"><i class="fab fa-cc-visa"></i> Visa</span>
+              <span class="brand-chip"><i class="fab fa-cc-mastercard"></i> Mastercard</span>
+              <span class="brand-chip"><i class="fab fa-cc-amex"></i> AmEx</span>
+              <span class="brand-chip"><i class="fab fa-cc-rupay"></i> RuPay</span>
+            </div>
+            <div class="form-group"><input type="text" id="cardNumber" placeholder="Card Number" inputmode="numeric" /></div>
+            <div class="form-row">
+              <div class="form-group"><input type="text" id="cardExpiry" placeholder="MM/YY" inputmode="numeric" /></div>
+              <div class="form-group"><input type="password" id="cardCvv" placeholder="CVV" inputmode="numeric" /></div>
+            </div>
+            <div class="form-group"><input type="text" id="cardName" placeholder="Name on Card" /></div>
+            <button class="btn btn-primary btn-block" id="payCardBtn">Pay Securely</button>
+            <div class="secure-badges"><i class="fas fa-shield-alt"></i><span>256-bit SSL • PCI-DSS compliant</span></div>
+          </div>
+
+          <div id="pane-netbanking" class="tab-pane">
+            <div class="form-group">
+              <select id="bankSelect">
+                <option value="">Select Your Bank</option>
+                <option>SBI</option>
+                <option>HDFC Bank</option>
+                <option>ICICI Bank</option>
+                <option>Axis Bank</option>
+                <option>Kotak</option>
+                <option>Yes Bank</option>
+                <option>PNB</option>
+              </select>
+            </div>
+            <button class="btn btn-primary btn-block" id="payBankBtn">Proceed to Net Banking</button>
+            <div class="input-hint">You’ll be redirected to your bank’s secure page to complete the payment.</div>
+          </div>
+
+          <div class="divider"></div>
+          <div class="summary-safe"><i class="fas fa-lock"></i><span>We do not store your payment details.</span></div>
+        </div>
+
+        <aside class="card summary">
+          <h3>Order Summary</h3>
+          <div class="summary-row"><span>Student</span><span id="sumName">—</span></div>
+          <div class="summary-row"><span>Program</span><span id="sumProgram">—</span></div>
+          <div class="summary-total"><span>Payable</span><span id="sumAmount">₹0</span></div>
+          <div class="summary-safe"><i class="fas fa-shield-alt"></i><span>Payments processed securely</span></div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2025 EC-Council. All rights reserved.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      const qs = new URLSearchParams(window.location.search);
+      const name = qs.get('name') || '';
+      const programKey = qs.get('program') || '';
+      const amount = parseInt(qs.get('amount') || '0', 10) || 0;
+      const label = programKey === 'self-paced' ? 'Self-Paced Learning' : programKey === 'instructor-led' ? 'Instructor-Led Training' : '—';
+      const formatINR = (n) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n).replace('₹\u00A0','₹');
+
+      const sumName = document.getElementById('sumName');
+      const sumProgram = document.getElementById('sumProgram');
+      const sumAmount = document.getElementById('sumAmount');
+      if (sumName) sumName.textContent = name || '—';
+      if (sumProgram) sumProgram.textContent = label;
+      if (sumAmount) sumAmount.textContent = formatINR(amount);
+
+      // Tabs
+      const nav = document.getElementById('tabNav');
+      const panes = {
+        upi: document.getElementById('pane-upi'),
+        card: document.getElementById('pane-card'),
+        netbanking: document.getElementById('pane-netbanking')
+      };
+      nav.addEventListener('click', (e) => {
+        const btn = e.target.closest('.tab-btn');
+        if (!btn) return;
+        const tab = btn.getAttribute('data-tab');
+        nav.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        Object.values(panes).forEach(p => p.classList.remove('active'));
+        panes[tab].classList.add('active');
+        if (tab === 'card') {
+          alert('Cards not accepted at this moment. Please use other payment method.');
+        }
+      });
+
+      function success() {
+        alert(`Payment successful!\n\nThank you, ${name}.\nProgram: ${label}\nAmount: ${formatINR(amount)}`);
+        window.location.href = 'index.html#pricing';
+      }
+
+      // UPI flow (simple validation)
+      const upiBtn = document.getElementById('payUpiBtn');
+      upiBtn && upiBtn.addEventListener('click', () => {
+        const upi = (document.getElementById('upiId') || {}).value || '';
+        if (!/^[\w\.\-]+@[\w\-]+$/.test(upi)) {
+          alert('Enter a valid UPI ID (e.g., name@upi)');
+          return;
+        }
+        // Demo flow: pretend to validate and charge
+        success();
+      });
+
+      // Card flow (disabled)
+      const cardBtn = document.getElementById('payCardBtn');
+      cardBtn && cardBtn.addEventListener('click', () => {
+        alert('Cards not accepted at this moment. Please use other payment method.');
+      });
+
+      // Net banking (mock redirect)
+      const bankBtn = document.getElementById('payBankBtn');
+      bankBtn && bankBtn.addEventListener('click', () => {
+        const bank = (document.getElementById('bankSelect') || {}).value;
+        if (!bank) return alert('Please select your bank');
+        // Demo: pretend redirect to bank and return
+        setTimeout(success, 800);
+      });
+    })();
+  </script>
+  <script src="js/script.js"></script>
+</body>
+</html>
