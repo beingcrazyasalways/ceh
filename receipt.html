@@ -257,7 +257,9 @@
 
       const el = (id) => document.getElementById(id);
       const subtotal = Number.isFinite(subtotalQ) ? subtotalQ : amount;
-      const discount = Number.isFinite(discountQ) ? discountQ : 0;
+      const discount = Number.isFinite(discountQ)
+        ? discountQ
+        : (Number.isFinite(paidQ) ? Math.max(0, subtotal - paidQ) : 0);
       const paid = Number.isFinite(paidQ) ? paidQ : Math.max(0, subtotal - discount);
       el('rName').textContent = name || '—';
       el('rProgram').textContent = label;
