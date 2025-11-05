@@ -17,7 +17,7 @@
       --ring: rgba(22, 163, 74, .15);
     }
     body { background: radial-gradient(1200px 300px at -10% -10%, #f5f7ff 0%, #ffffff 40%) no-repeat; }
-    .receipt-wrap { min-height: calc(100vh - 140px); display: grid; place-items: center; padding: 40px 16px; }
+    .receipt-wrap { min-height: calc(100vh - 140px); display: grid; place-items: center; padding: 56px 16px; }
     .receipt-card {
       width: 100%; max-width: 720px; background: var(--card);
       border: 1px solid #eaeaf3; border-radius: 18px; padding: 28px;
@@ -28,7 +28,7 @@
       content: ""; position: absolute; inset: 0; pointer-events: none;
       background: linear-gradient(120deg, rgba(22,163,74,0.08), rgba(255,255,255,0) 40%);
     }
-    .success-hero { display: grid; place-items: center; gap: 14px; margin: 10px 0 18px; }
+    .success-hero { display: grid; place-items: center; gap: 16px; margin: 6px 0 22px; }
     .checkmark {
       width: 108px; height: 108px; border-radius: 999px; background: radial-gradient(60px 60px at 50% 50%, #e7f8ee 0%, #dff7ea 35%, #d7f6e6 60%, #d1f3e1 100%);
       display: grid; place-items: center; box-shadow: 0 0 0 8px var(--ring), 0 14px 40px rgba(22,163,74,0.25);
@@ -44,14 +44,14 @@
     }
     @keyframes draw { to { stroke-dashoffset: 0; } }
 
-    .title { text-align: center; font-weight: 700; font-size: clamp(1.4rem, 3vw, 1.8rem); }
-    .subtitle { text-align:center; color: var(--muted); margin-top: 6px; }
+    .title { text-align: center; font-weight: 700; letter-spacing: -0.01em; font-size: clamp(1.5rem, 3.2vw, 2rem); }
+    .subtitle { text-align:center; color: var(--muted); margin-top: 4px; max-width: 720px; }
 
-    .receipt-grid { display: grid; grid-template-columns: 1.4fr .8fr; gap: 24px; margin-top: 24px; }
+    .receipt-grid { display: grid; grid-template-columns: 1.35fr .9fr; gap: 28px; margin-top: 26px; }
     @media (max-width: 860px) { .receipt-grid { grid-template-columns: 1fr; } }
 
-    .panel { border: 1px solid #eef0f6; border-radius: 14px; padding: 18px; background: #fafbff; }
-    .panel h3 { margin-bottom: 12px; }
+    .panel { border: 1px solid #eef0f6; border-radius: 14px; padding: 20px; background: #fafbff; }
+    .panel h3 { margin-bottom: 12px; font-size: 1.05rem; }
 
     .row { display:flex; align-items:center; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #e7e9f4; }
     .row:last-child { border-bottom: 0; }
@@ -59,7 +59,7 @@
     .amount { font-weight: 700; font-size: 1.1rem; }
 
     .badge { display: inline-flex; align-items:center; gap: 8px; padding: 6px 10px; border-radius: 999px; background: #ecfdf5; color: var(--success-600); font-weight: 600; }
-    .cta { display:flex; gap: 12px; justify-content:center; margin-top: 22px; flex-wrap: wrap; }
+    .cta { display:flex; gap: 12px; justify-content:center; margin-top: 24px; flex-wrap: wrap; }
     .btn { border: 1px solid #e7e7ef; background:#ffffff; padding: 10px 14px; border-radius: 10px; font-weight:600; cursor:pointer; }
     .btn.primary { background: var(--success); color: #fff; border-color: var(--success-600); box-shadow: 0 6px 18px rgba(22,163,74,.25); }
     .btn:hover { filter: brightness(.98); }
@@ -68,6 +68,14 @@
     .confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
     .confetti i { position:absolute; width:8px; height:14px; background: currentColor; opacity:.9; transform: translateY(-20vh) rotate(0deg); animation: fall 2200ms linear forwards; border-radius:2px; }
     @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: 1; } }
+
+    /* Print styles: focus on receipt card only */
+    @media print {
+      header.header, footer.footer, .confetti, .cta a[href="payment-options.html"] { display: none !important; }
+      body { background: #ffffff !important; }
+      .receipt-wrap { padding: 0; min-height: auto; }
+      .receipt-card { box-shadow: none; border: none; }
+    }
   </style>
 </head>
 <body>
@@ -92,9 +100,9 @@
               <path d="M16 34 L28 46 L50 20" />
             </svg>
           </div>
-          <div class="badge"><i class="fas fa-shield-check"></i> Payment secured</div>
+          <div class="badge"><i class="fas fa-shield-halved"></i> Secured by 256‑bit SSL</div>
           <h1 class="title">Payment Successful</h1>
-          <p class="subtitle">Thank you <span id="rName">—</span>! Your enrollment is confirmed.</p>
+          <p class="subtitle">Thank you <span id="rName">—</span>! Your payment has been received and your enrollment is confirmed.</p>
         </div>
 
         <div class="receipt-grid">
@@ -109,7 +117,7 @@
           </section>
           <aside class="panel">
             <h3>What happens next?</h3>
-            <p style="color:#6b7280; line-height:1.6">We’ve sent a confirmation to your registered contact. Our team will reach out with onboarding instructions and access within 24 hours.</p>
+            <p style="color:#6b7280; line-height:1.7">We’ve sent a confirmation to your registered contact. Our team will reach out with onboarding instructions and access within 24 hours.</p>
             <div class="divider" style="height:1px; background:linear-gradient(90deg, transparent, #eee, transparent); margin:14px 0 12px;"></div>
             <ul style="color:#4b5563; line-height:1.8; padding-left: 18px;">
               <li>Save this page or bookmark it for your records.</li>
@@ -183,5 +191,6 @@
       }
     })();
   </script>
+  <script src="js/script.js"></script>
 </body>
 </html>
