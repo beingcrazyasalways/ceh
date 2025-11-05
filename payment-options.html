@@ -184,6 +184,8 @@
       const name = qs.get('name') || '';
       const programKey = qs.get('program') || '';
       const amount = parseInt(qs.get('amount') || '0', 10) || 0;
+      const discountQ = parseInt(qs.get('discount') || NaN, 10);
+      const discount = Number.isFinite(discountQ) ? discountQ : 0;
       const label = programKey === 'self-paced' ? 'Self-Paced Learning' : programKey === 'instructor-led' ? 'Instructor-Led Training' : '—';
       const formatINR = (n) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n).replace('₹\u00A0','₹');
 
@@ -232,6 +234,9 @@
           name: name || '',
           program: programKey || '',
           amount: String(amount),
+          subtotal: String(amount),
+          discount: String(discount),
+          paid: String(Math.max(0, amount - discount)),
           method: 'upi',
           upi,
           tx
