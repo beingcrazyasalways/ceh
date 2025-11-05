@@ -227,8 +227,16 @@
           alert('Enter a valid UPI ID (e.g., name@upi)');
           return;
         }
-        // Demo flow: pretend to validate and charge
-        success();
+        const tx = 'TXN' + Date.now().toString(36).toUpperCase() + Math.floor(Math.random()*1000);
+        const params = new URLSearchParams({
+          name: name || '',
+          program: programKey || '',
+          amount: String(amount),
+          method: 'upi',
+          upi,
+          tx
+        });
+        window.location.href = `receipt.html?${params.toString()}`;
       });
 
       // Card flow (disabled)
