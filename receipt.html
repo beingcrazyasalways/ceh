@@ -112,6 +112,8 @@
           <section class="panel">
             <h3>Receipt Details</h3>
             <div class="row"><span>Program</span><span id="rProgram">—</span></div>
+            <div class="row"><span>Subtotal</span><span id="rSubtotal">₹0</span></div>
+            <div class="row"><span>Early Bird Discount</span><span id="rDiscount">—</span></div>
             <div class="row"><span>Amount Paid</span><span class="amount" id="rAmount">₹0</span></div>
             <div class="row"><span>Payment Method</span><span id="rMethod">UPI</span></div>
             <div class="row"><span>UPI ID</span><span id="rUpi">—</span></div>
@@ -183,11 +185,15 @@
         <tbody>
           <tr>
             <td style="padding:10px;border:1px solid #e5e7eb;">Enrollment Fee - <span id="prItem">—</span></td>
-            <td style="padding:10px;border:1px solid #e5e7eb;text-align:right;" id="prAmount">₹0</td>
+            <td style="padding:10px;border:1px solid #e5e7eb;text-align:right;" id="prSubtotal">₹0</td>
           </tr>
           <tr>
-            <td style="padding:10px;border:1px solid #e5e7eb;text-align:right;font-weight:700;">Total</td>
-            <td style="padding:10px;border:1px solid #e5e7eb;text-align:right;font-weight:700;" id="prTotal">₹0</td>
+            <td style="padding:10px;border:1px solid #e5e7eb;">Early Bird Discount</td>
+            <td style="padding:10px;border:1px solid #e5e7eb;text-align:right;color:#16a34a;" id="prDiscount">−₹0</td>
+          </tr>
+          <tr>
+            <td style="padding:10px;border:1px solid #e5e7eb;text-align:right;font-weight:700;">Amount Paid</td>
+            <td style="padding:10px;border:1px solid #e5e7eb;text-align:right;font-weight:700;" id="prPaid">₹0</td>
           </tr>
         </tbody>
       </table>
@@ -226,6 +232,9 @@
       const name = qs.get('name') || '';
       const programKey = qs.get('program') || '';
       const amount = parseInt(qs.get('amount') || '0', 10) || 0;
+      const subtotalQ = parseInt(qs.get('subtotal') || NaN, 10);
+      const discountQ = parseInt(qs.get('discount') || NaN, 10);
+      const paidQ = parseInt(qs.get('paid') || NaN, 10);
       const method = (qs.get('method') || 'upi').toUpperCase();
       const upi = qs.get('upi') || '—';
       const tx = qs.get('tx') || '—';
@@ -247,9 +256,14 @@
       }
 
       const el = (id) => document.getElementById(id);
+      const subtotal = Number.isFinite(subtotalQ) ? subtotalQ : amount;
+      const discount = Number.isFinite(discountQ) ? discountQ : 0;
+      const paid = Number.isFinite(paidQ) ? paidQ : Math.max(0, subtotal - discount);
       el('rName').textContent = name || '—';
       el('rProgram').textContent = label;
-      el('rAmount').textContent = formatINR(amount);
+      if (el('rSubtotal')) el('rSubtotal').textContent = formatINR(subtotal);
+      if (el('rDiscount')) el('rDiscount').textContent = discount ? `−${formatINR(discount)}` : '—';
+      el('rAmount').textContent = formatINR(paid);
       el('rMethod').textContent = method;
       el('rUpi').textContent = upi;
       el('rTx').textContent = tx;
@@ -289,9 +303,10 @@
       pr('prUpi').textContent = upi;
       pr('prTx').textContent = tx;
       pr('prItem').textContent = label;
-      pr('prAmount').textContent = formatINR(amount);
-      pr('prTotal').textContent = formatINR(amount);
-      const words = numberToWordsINR(amount);
+      pr('prSubtotal').textContent = formatINR(subtotal);
+      pr('prDiscount').textContent = `−${formatINR(discount)}`;
+      pr('prPaid').textContent = formatINR(paid);
+      const words = numberToWordsINR(paid);
       pr('prWords').textContent = words ? `${words} Rupees only` : `${formatINR(amount)} only`;
       pr('prPayee').textContent = payee;
     })();
