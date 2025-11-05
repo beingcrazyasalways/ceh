@@ -69,12 +69,13 @@
     .confetti i { position:absolute; width:8px; height:14px; background: currentColor; opacity:.9; transform: translateY(-20vh) rotate(0deg); animation: fall 2200ms linear forwards; border-radius:2px; }
     @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: 1; } }
 
-    /* Print styles: focus on receipt card only */
+    /* Print styles: focus on printable receipt */
     @media print {
-      header.header, footer.footer, .confetti, .cta a[href="payment-options.html"] { display: none !important; }
+      header.header, footer.footer, .confetti, .cta a[href="payment-options.html"], .cta a#dashboardBtn { display: none !important; }
       body { background: #ffffff !important; }
       .receipt-wrap { padding: 0; min-height: auto; }
-      .receipt-card { box-shadow: none; border: none; }
+      .receipt-card { display: none !important; }
+      .receipt-print { display: block !important; }
     }
   </style>
 </head>
@@ -130,6 +131,7 @@
         <div class="cta">
           <a class="btn" href="payment-options.html">Back</a>
           <a class="btn primary" href="index.html#pricing">Explore More Programs</a>
+          <a class="btn" id="dashboardBtn" href="#"><i class="fas fa-graduation-cap"></i> Go to My Course</a>
           <button class="btn" id="printBtn"><i class="fas fa-print"></i> Print Receipt</button>
         </div>
       </div>
@@ -137,6 +139,63 @@
   </main>
 
   <div class="confetti" id="confetti"></div>
+
+  <!-- Print-friendly receipt (hidden on screen) -->
+  <section class="receipt-print" id="printReceipt" style="display:none;">
+    <div style="max-width:800px;margin:0 auto;padding:24px 16px;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #e5e7eb;padding-bottom:12px;">
+        <div>
+          <h2 style="margin:0;font-size:22px;">EC-Council</h2>
+          <div style="color:#6b7280;font-size:13px;">CEH AI Program</div>
+          <div style="color:#6b7280;font-size:13px;">www.eccouncil.org</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:700;">Payment Receipt</div>
+          <div style="color:#6b7280;font-size:13px;">Receipt No: <span id="prNo">—</span></div>
+          <div style="color:#6b7280;font-size:13px;">Date: <span id="prDate">—</span></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+        <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;">
+          <div style="font-weight:600;margin-bottom:6px;">Bill To</div>
+          <div id="prName">—</div>
+          <div id="prProgram" style="color:#6b7280;font-size:13px;">—</div>
+        </div>
+        <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;">
+          <div style="font-weight:600;margin-bottom:6px;">Payment Info</div>
+          <div>Method: <span id="prMethod">—</span></div>
+          <div>UPI ID: <span id="prUpi">—</span></div>
+          <div>Transaction ID: <span id="prTx">—</span></div>
+        </div>
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;margin-top:18px;">
+        <thead>
+          <tr style="background:#f3f4f6;">
+            <th style="text-align:left;padding:10px;border:1px solid #e5e7eb;">Description</th>
+            <th style="text-align:right;padding:10px;border:1px solid #e5e7eb;width:160px;">Amount (INR)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:10px;border:1px solid #e5e7eb;">Enrollment Fee - <span id="prItem">—</span></td>
+            <td style="padding:10px;border:1px solid #e5e7eb;text-align:right;" id="prAmount">₹0</td>
+          </tr>
+          <tr>
+            <td style="padding:10px;border:1px solid #e5e7eb;text-align:right;font-weight:700;">Total</td>
+            <td style="padding:10px;border:1px solid #e5e7eb;text-align:right;font-weight:700;" id="prTotal">₹0</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:10px;color:#6b7280;font-size:13px;">Amount in words: <span id="prWords">—</span></div>
+
+      <div style="margin-top:18px;color:#6b7280;font-size:12px;border-top:1px dashed #e5e7eb;padding-top:10px;">
+        This is a computer generated receipt and does not require a physical signature.
+      </div>
+    </div>
+  </section>
 
   <footer class="footer">
     <div class="container">
@@ -163,6 +222,19 @@
       const tx = qs.get('tx') || '—';
       const label = programKey === 'self-paced' ? 'Self-Paced Learning' : programKey === 'instructor-led' ? 'Instructor-Led Training' : '—';
       const formatINR = (n) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n).replace('₹\u00A0','₹');
+      function numberToWordsINR(num){
+        const a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+        const b=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+        function toWords(n){
+          if(n<20) return a[n];
+          if(n<100) return b[Math.floor(n/10)]+(n%10? ' '+a[n%10]:'');
+          if(n<1000) return a[Math.floor(n/100)]+' Hundred'+(n%100?' '+toWords(n%100):'');
+          if(n<100000) return toWords(Math.floor(n/1000))+' Thousand'+(n%1000?' '+toWords(n%1000):'');
+          if(n<10000000) return toWords(Math.floor(n/100000))+' Lakh'+(n%100000?' '+toWords(n%100000):'');
+          return toWords(Math.floor(n/10000000))+' Crore'+(n%10000000?' '+toWords(n%10000000):'');
+        }
+        return toWords(num).trim();
+      }
 
       const el = (id) => document.getElementById(id);
       el('rName').textContent = name || '—';
@@ -175,6 +247,13 @@
 
       const printBtn = document.getElementById('printBtn');
       printBtn && printBtn.addEventListener('click', () => window.print());
+
+      // Set dashboard link with context
+      const dash = document.getElementById('dashboardBtn');
+      if (dash) {
+        const params = new URLSearchParams({ name, program: programKey, tx });
+        dash.href = `dashboard.html?${params.toString()}`;
+      }
 
       // Light confetti
       const confetti = document.getElementById('confetti');
@@ -189,6 +268,21 @@
         p.style.animationDelay = Math.random()*400 + 'ms';
         confetti.appendChild(p);
       }
+
+      // Populate print receipt
+      const pr = (id)=>document.getElementById(id);
+      pr('prNo').textContent = tx !== '—' ? tx : 'REC' + Date.now().toString(36).toUpperCase();
+      pr('prDate').textContent = new Date().toLocaleString();
+      pr('prName').textContent = name || '—';
+      pr('prProgram').textContent = label;
+      pr('prMethod').textContent = method;
+      pr('prUpi').textContent = upi;
+      pr('prTx').textContent = tx;
+      pr('prItem').textContent = label;
+      pr('prAmount').textContent = formatINR(amount);
+      pr('prTotal').textContent = formatINR(amount);
+      const words = numberToWordsINR(amount);
+      pr('prWords').textContent = words ? `${words} Rupees only` : `${formatINR(amount)} only`;
     })();
   </script>
   <script src="js/script.js"></script>

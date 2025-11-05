@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Course Dashboard | CEH AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .dash-hero { padding: 40px 0; background: linear-gradient(135deg, #f6f8ff 0%, #ffffff 60%); border-bottom: 1px solid #eef0f6; }
+    .dash-grid { display:grid; grid-template-columns: 1.2fr .8fr; gap: 24px; margin-top: 22px; }
+    @media (max-width: 900px) { .dash-grid { grid-template-columns:1fr; } }
+    .card { background:#ffffff; border:1px solid #eaeaf3; border-radius:16px; box-shadow:0 8px 26px rgba(0,0,0,0.06); overflow:hidden; }
+    .card .card-body { padding:18px; }
+    .profile { display:flex; gap:16px; align-items:center; }
+    .avatar { width:64px; height:64px; border-radius:999px; background:linear-gradient(180deg,#eef0ff,#f9faff); display:grid; place-items:center; font-weight:700; color:#6772e5; border:1px solid #e7e7ef; }
+    .badge { display:inline-flex; gap:8px; align-items:center; padding:6px 10px; border-radius:999px; background:#ecfdf5; color:#15803d; font-weight:600; font-size:.9rem; }
+    .stat { display:flex; align-items:center; gap:10px; color:#4b5563; }
+    .stats { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:14px; }
+    @media (max-width: 640px) { .stats { grid-template-columns:1fr; } }
+    .progress { height:10px; background:#eef0f6; border-radius:999px; overflow:hidden; }
+    .progress > span { display:block; height:100%; background:linear-gradient(90deg,#34d399,#16a34a); width:0%; transition:width .6s ease; }
+    .list { display:grid; gap:10px; margin-top:10px; }
+    .list .item { display:flex; justify-content:space-between; align-items:center; border:1px solid #eef0f6; border-radius:12px; padding:12px; background:#fafbff; }
+    .pill { padding:6px 10px; border-radius:999px; background:#eef2ff; color:#3730a3; font-weight:600; font-size:.85rem; }
+    .cta { display:flex; gap:10px; flex-wrap:wrap; }
+    .btn { border:1px solid #e7e7ef; background:#ffffff; padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:8px; }
+    .btn.primary { background:#16a34a; color:#fff; border-color:#15803d; box-shadow: 0 6px 18px rgba(22,163,74,.25); }
+    .muted { color:#6b7280; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <nav class="navbar">
+        <div class="logo"><a href="index.html">EC-Council</a></div>
+        <ul class="nav-links">
+          <li><a href="index.html#pricing">Programs</a></li>
+          <li><a href="receipt.html" id="viewReceiptLink">View Receipt</a></li>
+        </ul>
+        <div class="hamburger"><span></span><span></span><span></span></div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="dash-hero">
+      <div class="container">
+        <div class="card">
+          <div class="card-body">
+            <div class="profile">
+              <div class="avatar" id="avatar">U</div>
+              <div>
+                <h2 style="margin:0;">Welcome, <span id="uName">User</span></h2>
+                <div class="muted">Transaction: <span id="uTx">—</span></div>
+              </div>
+              <div style="margin-left:auto; display:flex; gap:10px; align-items:center;">
+                <span class="badge"><i class="fas fa-crown"></i> Premium</span>
+                <span class="pill" id="programTag">—</span>
+              </div>
+            </div>
+            <div class="stats">
+              <div class="stat"><i class="fas fa-book-open"></i> Modules Completed: <strong id="statModules">0/12</strong></div>
+              <div class="stat"><i class="fas fa-clock"></i> Learning Streak: <strong id="statStreak">1 day</strong></div>
+              <div class="stat"><i class="fas fa-certificate"></i> Status: <strong>Active</strong></div>
+            </div>
+            <div class="progress" style="margin-top:12px;"><span id="progressBar"></span></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+              <div class="muted">Overall Progress</div>
+              <div id="progressPct">0%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="dash-grid">
+          <div class="card">
+            <div class="card-body">
+              <h3 style="margin-top:0;">Your Coursework</h3>
+              <div class="list" id="moduleList"></div>
+            </div>
+          </div>
+          <aside class="card">
+            <div class="card-body">
+              <h3 style="margin-top:0;">Linked LPU Account</h3>
+              <div class="muted">Registered with LPU</div>
+              <div style="display:grid; gap:8px; margin-top:8px;">
+                <div><strong>Account:</strong> <span id="lpuAccount">—</span></div>
+                <div><strong>Status:</strong> <span class="pill">Verified</span></div>
+              </div>
+              <div class="divider" style="height:1px; background:linear-gradient(90deg, transparent, #eee, transparent); margin:16px 0;"></div>
+              <div class="cta">
+                <a class="btn primary" id="continueBtn" href="#"><i class="fas fa-play"></i> Continue Learning</a>
+                <a class="btn" id="viewReceiptBtn" href="#"><i class="fas fa-file-invoice"></i> View Receipt</a>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2025 EC-Council. All rights reserved.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      const qs = new URLSearchParams(window.location.search);
+      const name = qs.get('name') || 'User';
+      const programKey = qs.get('program') || '';
+      const tx = qs.get('tx') || '';
+      const label = programKey === 'self-paced' ? 'Self-Paced Learning' : programKey === 'instructor-led' ? 'Instructor-Led Training' : 'CEH AI Program';
+
+      const el = (id)=>document.getElementById(id);
+      el('uName').textContent = name;
+      el('uTx').textContent = tx || '—';
+      el('programTag').textContent = label;
+      el('avatar').textContent = (name.trim()[0]||'U').toUpperCase();
+
+      const lpuId = 'LPU-' + (tx ? tx.slice(-8) : Math.random().toString(36).slice(2,10)).toUpperCase();
+      el('lpuAccount').textContent = lpuId;
+
+      const modules = [
+        { title: 'Introduction to CEH AI', duration: '20m', done: true },
+        { title: 'Threat Modeling with AI', duration: '45m', done: true },
+        { title: 'Adversarial ML Basics', duration: '35m', done: false },
+        { title: 'Web App Pentesting (AI-assisted)', duration: '50m', done: false },
+        { title: 'Network Scanning Automation', duration: '40m', done: false },
+        { title: 'Malware Analysis with AI', duration: '55m', done: false },
+      ];
+      const list = el('moduleList');
+      modules.forEach((m, i) => {
+        const row = document.createElement('div');
+        row.className = 'item';
+        row.innerHTML = `
+          <div style="display:flex; align-items:center; gap:10px;">
+            <i class="${m.done ? 'fas fa-check-circle' : 'far fa-circle'}" style="color:${m.done ? '#16a34a' : '#9ca3af'}"></i>
+            <div>
+              <div style="font-weight:600;">${i+1}. ${m.title}</div>
+              <div class="muted">${m.duration}</div>
+            </div>
+          </div>
+          <a class="btn" href="#"><i class="fas fa-arrow-right"></i> ${m.done ? 'Review' : 'Start'}</a>
+        `;
+        list.appendChild(row);
+      });
+
+      const completed = modules.filter(m=>m.done).length;
+      const total = modules.length;
+      const pct = Math.round((completed/total)*100);
+      el('statModules').textContent = `${completed}/${total}`;
+      el('progressPct').textContent = `${pct}%`;
+      el('progressBar').style.width = pct + '%';
+
+      const params = new URLSearchParams({ name, program: programKey, tx });
+      el('viewReceiptBtn').href = `receipt.html?${params.toString()}`;
+      const vrl = document.getElementById('viewReceiptLink'); if (vrl) vrl.href = `receipt.html?${params.toString()}`;
+      el('continueBtn').href = '#';
+    })();
+  </script>
+  <script src="js/script.js"></script>
+</body>
+</html>
